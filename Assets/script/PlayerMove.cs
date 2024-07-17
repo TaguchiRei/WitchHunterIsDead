@@ -29,7 +29,7 @@ public class PlayerMove : MonoBehaviour
         {
             if (horizontal < 0)
             {
-                Debug.Log(horizontal);
+
             }
         }
     }
