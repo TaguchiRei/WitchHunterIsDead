@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class EnemyMove : MonoBehaviour
 {
-    [SerializeField] Transform _enemy;             // 自分自身
+    [SerializeField] Transform _enemy;         // 自分自身
     [SerializeField] float distance = 0.8f;    // 検出可能な距離
     [SerializeField] private float _sightAngle;//視野角
     [SerializeField] private float _maxDistance = float.PositiveInfinity;//視野の距離
     GameObject[] _target;
+    float _trace;
+
     void Update()
     {
-
+        
     }
     private void FixedUpdate()
     {
@@ -122,5 +124,13 @@ public class EnemyMove : MonoBehaviour
         //見えるかどうかを判定。見えるならtrueを代入。
         bool canSee = innerProduct > cosHalf && targetDistance < _maxDistance;
         return canSee;
+    }
+
+    enum VigilanceLevel
+    {
+        nomal,
+        discomfort,
+        vigilance,
+        discovery,
     }
 }
