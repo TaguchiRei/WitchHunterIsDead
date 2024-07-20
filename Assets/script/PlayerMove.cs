@@ -6,6 +6,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] float _moveSpeed = 1;
     [SerializeField] float _dashSpeed = 1.2f;
     [SerializeField] Rigidbody _rig;
+    [SerializeField] Animator _anim;
     Vector3 _move = Vector3.zero;
     float _mouseX = 0;
     bool _dash = false;
@@ -57,6 +58,15 @@ public class PlayerMove : MonoBehaviour
         if(_dash)
         {
             speed = speed * _dashSpeed;
+            _anim.SetInteger("run", 2);
+        }
+        else
+        {
+            _anim.SetInteger("run", 1);
+        }
+        if (_move.x ==0||_move.z == 0)
+        {
+            _anim.SetInteger("run",0);
         }
         _move.Normalize();
         _rig.velocity = new Vector3(_move.x * speed, _rig.velocity.y, _move.z * speed);
