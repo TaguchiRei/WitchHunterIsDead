@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
@@ -7,8 +8,10 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] float _dashSpeed = 1.2f;
     [SerializeField] Rigidbody _rig;
     [SerializeField] Animator _anim;
+    [SerializeField] GameObject _smellObject;
     Vector3 _move = Vector3.zero;
     float _mouseX = 0;
+    float _smell = 0;
     bool _dash = false;
 
     void Update()
@@ -71,5 +74,12 @@ public class PlayerMove : MonoBehaviour
         _move.Normalize();
         _rig.velocity = new Vector3(_move.x * speed, _rig.velocity.y, _move.z * speed);
         _move = new Vector3(0, _rig.velocity.y, 0);
+        if (_smell<0)
+        {
+            _smell = 1;
+            Instantiate(_smellObject,transform.position, Quaternion.identity);
+        }
     }
+    
+
 }

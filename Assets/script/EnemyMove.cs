@@ -1,19 +1,52 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyMove : MonoBehaviour
 {
+    [SerializeField] float _moveSpeed = 1f;
     [SerializeField] Transform _enemy;         // 自分自身
     [SerializeField] float distance = 0.8f;    // 検出可能な距離
     [SerializeField] private float _sightAngle;//視野角
     [SerializeField] private float _maxDistance = float.PositiveInfinity;//視野の距離
+    [SerializeField] Rigidbody _rig;
     GameObject[] _target;
     float _trace;
+    float _randomMoveTime = 0;
+    bool _useTrace = true;
+    bool _moving = false;
+    Vector3 movePosition;
 
     void Update()
     {
-        
+        if (_useTrace)
+        {
+            GameObject showThis = IsVisible();
+            if (showThis != null)
+            {
+                _moving = false;
+                _randomMoveTime = 0;
+            }
+            else
+            {
+                if(!_moving)
+                {
+                    movePosition = new Vector3(Random.Range(-3, 3), 0, Random.Range(-3, 3));
+                    movePosition.Normalize();
+                    movePosition = new Vector3(Mathf.Round(movePosition.x), Mathf.Round(movePosition.y), Mathf.Round(movePosition.z));
+                    _randomMoveTime = Random.Range(2, 5);
+                    _moving = true;
+                }
+                _rig.velocity = new Vector3(movePosition.x,_rig.velocity.y,movePosition.z) * _moveSpeed;
+                if(_randomMoveTime > 0)
+                {
+                    _randomMoveTime -= Time.deltaTime;
+                    if(_randomMoveTime < 0)
+                    {
+                        _moving = false;
+                    }
+                }
+            }
+        }
     }
     private void FixedUpdate()
     {
@@ -24,15 +57,16 @@ public class EnemyMove : MonoBehaviour
 
     }
     /// <summary>
-    /// 視界内の最も近距離でかつ視認可能なオブジェクトの座標をVector3型で返す
+    /// 視界内の最も近距離でかつ視認可能なオブジェクトをゲームオブジェクト型で返す
     /// </summary>
     /// <returns></returns>
-    public Vector3 IsVisible()
+    public GameObject IsVisible()
     {
         _target = GameObject.FindGameObjectsWithTag("PlayerTrace");
         // 自身の位置
         var selfPos = _enemy.position;
         var targetPos = new Vector3(999, 999, 999);
+        GameObject obj = null;
         // ターゲットの位置を決める際に_targetの中の一番近いオブジェクトを入れる
         for (int i = 0; i < _target.Length; i++)
         {
@@ -48,6 +82,7 @@ public class EnemyMove : MonoBehaviour
                     {
                         //ここに入れる
                         targetPos = _target[i].transform.position;
+                        obj = _target[i];
                     }
                 }
             }
@@ -55,11 +90,11 @@ public class EnemyMove : MonoBehaviour
 
         if (targetPos != new Vector3(999, 999, 999))
         {
-            return (targetPos);
+            return (null);
         }
         else
         {
-            return (new Vector3(0, 0, 0));
+            return (obj);
         }
     }
 
